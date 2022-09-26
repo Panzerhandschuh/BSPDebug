@@ -1,0 +1,6 @@
+[submodule "Submodules/BSPConversionLib"]
+	path = Submodules/BSPConversionLib
+	url = https://github.com/Panzerhandschuh/BSPConversionLib.git
+[submodule "Submodules/LibBSP"]
+	path = Submodules/LibBSP
+	url = https://github.com/Panzerhandschuh/LibBSP.git

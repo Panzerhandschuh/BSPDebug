@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4794235325409426449
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4794235325409426448}
+  - component: {fileID: 5302980429178570535}
+  m_Layer: 0
+  m_Name: FaceDebug
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4794235325409426448
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4794235325409426449}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5302980429178570535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4794235325409426449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2470e59475dd2df44b2718e7aea78a55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  texture: 0
+  effect: 0
+  type: 0
+  firstVertexIndex: 0
+  numVertices: 0
+  firstMeshVertexIndex: 0
+  numMeshVertices: 0
+  lightmapIndex: 0
+  lightmapStart: {x: 0, y: 0}
+  lightmapSize: {x: 0, y: 0}
+  lightmapOrigin: {x: 0, y: 0, z: 0}
+  lightmapVecs:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  normal: {x: 0, y: 0, z: 0}
+  size: {x: 0, y: 0}
+  planeIndex: 0
+  side: 0
+  onNode: 0
+  firstEdge: 0
+  numEdges: 0
+  textureInfoIndex: 0
+  dispInfo: 0
+  surfaceFogVolumeId: 0
+  styles: 00000000
+  lightOffset: 0
+  area: 0
+  lightmapTextureMinsInLuxels: {x: 0, y: 0}
+  lightmapTextureSizeInLuxels: {x: 0, y: 0}
+  origFace: 0
+  numPrims: 0
+  firstPrimId: 0
+  smoothingGroups: 0
+  vertexRefs: []
+  meshVertexRefs: []
+  planeRef: {fileID: 0}
+  textureInfoRef: {fileID: 0}

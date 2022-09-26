@@ -1,0 +1,39 @@
+﻿using LibBSP;
+using UnityEngine;
+
+public class BrushSideDebug : MonoBehaviour, IDebugReference
+{
+	public int planeIndex;
+	public int textureIndex;
+	public int dispInfo; // Source only
+	public bool bevel; // Source only
+
+	public PlaneDebug planeRef;
+	public TextureDebug textureRef;
+	public TextureInfoDebug textureInfoRef;
+
+	private MapType bspMapType;
+
+	public void Init(BSP bsp, BrushSide brushSide)
+	{
+		planeIndex = brushSide.PlaneIndex;
+		textureIndex = brushSide.TextureIndex;
+		dispInfo = brushSide.DisplacementIndex;
+		bevel = brushSide.IsBevel;
+
+		bspMapType = bsp.MapType;
+	}
+
+	public void InitReferences()
+	{
+		planeRef = GameObject.Find($"{nameof(PlaneDebug)}_{planeIndex}").GetComponent<PlaneDebug>();
+		transform.position = planeRef.transform.position;
+		transform.rotation = planeRef.transform.rotation;
+
+		// TODO: Lookup textures from Textures lump for quake
+		if (bspMapType.IsSubtypeOf(MapType.Quake3))
+			textureRef = GameObject.Find($"{nameof(TextureDebug)}_{textureIndex}").GetComponent<TextureDebug>();
+		else if (bspMapType.IsSubtypeOf(MapType.Source))
+			textureInfoRef = GameObject.Find($"{nameof(TextureInfoDebug)}_{textureIndex}").GetComponent<TextureInfoDebug>();
+	}
+}
