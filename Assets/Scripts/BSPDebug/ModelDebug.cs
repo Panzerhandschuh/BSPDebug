@@ -10,8 +10,13 @@ public class ModelDebug : MonoBehaviour, IDebugReference
     public int brush;
     public int numBrushes;
 
-    public GameObject[] faceRefs;
-    public GameObject[] brushRefs;
+	// Source only
+	public Vector3 origin;
+	public int headNode;
+
+	public FaceDebug[] faceRefs;
+    public BrushDebug[] brushRefs;
+	public NodeDebug headNodeRef;
 
 	public void Init(Model model)
 	{
@@ -21,20 +26,26 @@ public class ModelDebug : MonoBehaviour, IDebugReference
 		numFaces = model.NumFaces;
 		brush = model.FirstBrushIndex;
 		numBrushes = model.NumBrushes;
+
+		origin = model.Origin;
+		headNode = model.HeadNodeIndex;
 	}
 
 	public void InitReferences()
 	{
-		faceRefs = new GameObject[numFaces];
+		faceRefs = new FaceDebug[numFaces];
 		for (int i = 0; i < numFaces; i++)
-			faceRefs[i] = GameObject.Find($"{nameof(FaceDebug)}_{face + i}");
+			faceRefs[i] = GameObject.Find($"{nameof(FaceDebug)}_{face + i}").GetComponent<FaceDebug>();
 
 		if (numBrushes > 0)
 		{
-			brushRefs = new GameObject[numBrushes];
+			brushRefs = new BrushDebug[numBrushes];
 			for (int i = 0; i < numBrushes; i++)
-				brushRefs[i] = GameObject.Find($"{nameof(BrushDebug)}_{brush + i}");
+				brushRefs[i] = GameObject.Find($"{nameof(BrushDebug)}_{brush + i}").GetComponent<BrushDebug>();
 		}
+
+		if (headNode > -1)
+			headNodeRef = GameObject.Find($"{nameof(NodeDebug)}_{headNode}").GetComponent<NodeDebug>();
 	}
 
 	private void OnDrawGizmosSelected()
@@ -44,5 +55,8 @@ public class ModelDebug : MonoBehaviour, IDebugReference
 		bounds.max = maxs.SwizzleYZ();
 
 		DebugExtension.DrawBounds(bounds, Color.yellow);
+
+		foreach (var face in faceRefs)
+			face.DebugDraw();
 	}
 }

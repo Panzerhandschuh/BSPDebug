@@ -133,6 +133,11 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 
 	private void OnDrawGizmosSelected()
 	{
+		DebugDraw();
+	}
+
+	public void DebugDraw()
+	{
 		DebugDrawQuake3();
 		DebugDrawSource();
 	}
@@ -140,16 +145,16 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 	private void DebugDrawQuake3()
 	{
 		// Mesh vertices
-		Gizmos.color = Color.yellow;
-		for (var i = 0; i < meshVertexRefs.Length; i += 3)
-		{
-			Gizmos.DrawLine(meshVertexRefs[i].transform.position, meshVertexRefs[i + 1].transform.position);
-			Gizmos.DrawLine(meshVertexRefs[i + 1].transform.position, meshVertexRefs[i + 2].transform.position);
-			Gizmos.DrawLine(meshVertexRefs[i + 2].transform.position, meshVertexRefs[i].transform.position);
-		}
+		//Gizmos.color = Color.yellow;
+		//for (var i = 0; i < meshVertexRefs.Length; i += 3)
+		//{
+		//	Gizmos.DrawLine(meshVertexRefs[i].transform.position, meshVertexRefs[i + 1].transform.position);
+		//	Gizmos.DrawLine(meshVertexRefs[i + 1].transform.position, meshVertexRefs[i + 2].transform.position);
+		//	Gizmos.DrawLine(meshVertexRefs[i + 2].transform.position, meshVertexRefs[i].transform.position);
+		//}
 
 		// Vertices
-		Gizmos.color = Color.red;
+		Gizmos.color = Color.white;
 		for (var i = 0; i < vertexRefs.Length; i++)
 		{
 			var nextIndex = (i + 1) % vertexRefs.Length;

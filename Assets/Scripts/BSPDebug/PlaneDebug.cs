@@ -17,8 +17,9 @@ public class PlaneDebug : MonoBehaviour
 		transform.rotation = Quaternion.LookRotation(norm) * Quaternion.AngleAxis(90f, Vector3.right);
 	}
 
-	private void OnDrawGizmos()
+	private void OnDrawGizmosSelected()
 	{
-		Gizmos.DrawRay(transform.position, transform.up);
+		Gizmos.color = Color.blue;
+		Gizmos.DrawRay(transform.position, transform.up * 10f);
 	}
 }

@@ -45,8 +45,8 @@ public class BSPLoader
 		LoadFaces(bsp.Faces);
 		//LoadLightmaps(bsp.Lightmaps);
 		//LoadLightVols(bsp.);
-		if (bsp.VisibilityLoaded)
-			LoadVisibility(bsp.Visibility);
+		//if (bsp.VisibilityLoaded)
+		LoadVisibility(bsp.Visibility);
 
 		LoadReferences();
 	}
@@ -187,6 +187,9 @@ public class BSPLoader
 
 	private void LoadVisibility(Visibility visibility)
 	{
+		if (visibility.Data.Length == 0)
+			return;
+
 		var instance = worldRoot.AddComponent<VisDataDebug>();
 		instance.Init(visibility);
 	}
