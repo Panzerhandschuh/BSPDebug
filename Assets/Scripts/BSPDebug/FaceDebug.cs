@@ -31,7 +31,7 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 	public int planeIndex;
 	public bool side;
 	public bool onNode;
-	public int firstEdge;
+	public int firstEdgeIndex;
 	public int numEdges;
 	public int textureInfoIndex;
 	public int dispInfo;
@@ -41,9 +41,9 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 	public float area;
 	public Vector2 lightmapTextureMinsInLuxels;
 	public Vector2 lightmapTextureSizeInLuxels;
-	public int origFace;
-	public int numPrims;
-	public int firstPrimId;
+	public int originalFace;
+	public int numPrimitives;
+	public int firstPrimitiveId;
 	public int smoothingGroups;
 
 	public VertexDebug[] vertexRefs;
@@ -76,7 +76,7 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 		planeIndex = face.PlaneIndex;
 		side = face.PlaneSide;
 		onNode = face.IsOnNode;
-		firstEdge = face.FirstEdgeIndexIndex;
+		firstEdgeIndex = face.FirstEdgeIndexIndex;
 		numEdges = face.NumEdgeIndices;
 		textureInfoIndex = face.TextureInfoIndex;
 		dispInfo = face.DisplacementIndex;
@@ -86,9 +86,9 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 		area = face.Area;
 		lightmapTextureMinsInLuxels = face.LightmapStart;
 		lightmapTextureSizeInLuxels = face.LightmapSize;
-		origFace = face.OriginalFaceIndex;
-		numPrims = face.NumPrimitives;
-		firstPrimId = face.FirstPrimitive;
+		originalFace = face.OriginalFaceIndex;
+		numPrimitives = face.NumPrimitives;
+		firstPrimitiveId = face.FirstPrimitive;
 		smoothingGroups = face.SmoothingGroups;
 
 		meshVerts = bsp.Indices;
@@ -116,11 +116,11 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 		if (planeIndex > -1)
 			planeRef = GameObject.Find($"PlaneDebug_{planeIndex}").GetComponent<PlaneDebug>();
 
-		if (firstEdge > -1)
+		if (firstEdgeIndex > -1)
 		{
 			edgeRefs = new SurfaceEdgeDebug[numEdges];
 			for (var i = 0; i < numEdges; i++)
-				edgeRefs[i] = GameObject.Find($"{nameof(SurfaceEdgeDebug)}_{firstEdge + i}").GetComponent<SurfaceEdgeDebug>();
+				edgeRefs[i] = GameObject.Find($"{nameof(SurfaceEdgeDebug)}_{firstEdgeIndex + i}").GetComponent<SurfaceEdgeDebug>();
 		}
 
 		if (textureInfoIndex > -1)

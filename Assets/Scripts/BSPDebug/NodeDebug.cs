@@ -10,9 +10,15 @@ public class NodeDebug : MonoBehaviour, IDebugReference
     public Vector3 mins;
     public Vector3 maxs;
 
-	public GameObject planeRef;
+	// Source only
+	public int firstFaceIndex;
+	public int numFaces;
+	public int area;
+
+	public PlaneDebug planeRef;
 	public GameObject child1Ref;
 	public GameObject child2Ref;
+	public FaceDebug[] faceRefs;
 
 	public void Init(BSP bsp, Node node)
 	{
@@ -22,17 +28,29 @@ public class NodeDebug : MonoBehaviour, IDebugReference
 		mins = node.Minimums;
 		maxs = node.Maximums;
 
+		// Source only
+		firstFaceIndex = node.FirstFaceIndex;
+		numFaces = node.NumFaceIndices;
+		area = node.AreaIndex;
+
 		var bspPlane = bsp.Planes[plane];
-		var norm = bspPlane.normal.SwizzleYZ();
-		transform.position = norm * bspPlane.distance;
+		var norm = bspPlane.Normal.SwizzleYZ();
+		transform.position = norm * bspPlane.Distance;
 		transform.rotation = Quaternion.LookRotation(norm) * Quaternion.AngleAxis(90f, Vector3.right);
 	}
 
 	public void InitReferences()
 	{
-		planeRef = GameObject.Find($"PlaneDebug_{plane}");
+		planeRef = GameObject.Find($"PlaneDebug_{plane}").GetComponent<PlaneDebug>();
 		child1Ref = FindChild(children[0]);
 		child2Ref = FindChild(children[1]);
+
+		if (numFaces > 0)
+		{
+			faceRefs = new FaceDebug[numFaces];
+			for (int i = 0; i < numFaces; i++)
+				faceRefs[i] = GameObject.Find($"{nameof(FaceDebug)}_{firstFaceIndex + i}").GetComponent<FaceDebug>();
+		}
 	}
 
 	private GameObject FindChild(int childIndex)
@@ -45,10 +63,18 @@ public class NodeDebug : MonoBehaviour, IDebugReference
 
 	private void OnDrawGizmosSelected()
 	{
+		DebugDraw();
+	}
+
+	private void DebugDraw()
+	{
 		var bounds = new Bounds();
 		bounds.min = mins.SwizzleYZ();
 		bounds.max = maxs.SwizzleYZ();
 
 		DebugExtension.DrawBounds(bounds, Color.red);
+
+		foreach (var faceRef in faceRefs)
+			faceRef.DebugDraw();
 	}
 }

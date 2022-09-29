@@ -21,21 +21,20 @@ public class BSPLoader
 		worldRoot = new GameObject("World");
 
 		LoadEntities(bsp.Entities);
-		if (bsp.MapType.IsSubtypeOf(MapType.Quake3))
-			LoadTextures(bsp.Textures);
+		LoadTextures(bsp.Textures);
 		if (bsp.MapType.IsSubtypeOf(MapType.Source))
 		{
 			LoadTextureInfo(bsp.TextureInfo);
 			LoadTextureData(bsp.TextureData);
 			LoadTextureDataStringTable(bsp.TextureTable);
 			LoadEdges(bsp.FaceEdges);
-			LoadOriginalFaces(bsp.OriginalFaces);
+			//LoadOriginalFaces(bsp.OriginalFaces);
 		}
 		LoadPlanes(bsp.Planes);
 		LoadNodes(bsp.Nodes);
 		LoadLeafs(bsp.Leaves);
-		//LoadLeafFaces(bsp.LeafFaces); // Ignore NumList
-		//LoadLeafBrushes(bsp.LeafBrushes); // Ignore NumList
+		LoadLeafFaces(bsp.LeafFaces);
+		LoadLeafBrushes(bsp.LeafBrushes);
 		LoadModels(bsp.Models);
 		LoadBrushes(bsp.Brushes);
 		LoadBrushSides(bsp.BrushSides);
@@ -103,7 +102,7 @@ public class BSPLoader
 		}
 	}
 
-	private void LoadPlanes(Lump<Plane> planes)
+	private void LoadPlanes(Lump<PlaneBSP> planes)
 	{
 		for (var i = 0; i < planes.Count; i++)
 		{
@@ -126,8 +125,22 @@ public class BSPLoader
 		for (var i = 0; i < leaves.Count; i++)
 		{
 			var instance = InstantiatePrefab<LeafDebug>("LeafDebug", i);
-			instance.Init(bsp, leaves[i]);
+			instance.Init(leaves[i]);
 		}
+	}
+
+	private void LoadLeafFaces(NumList leafFaces)
+	{
+		var instance = worldRoot.AddComponent<NumListDebug>();
+		instance.listName = "Leaf Faces";
+		instance.Init(leafFaces);
+	}
+
+	private void LoadLeafBrushes(NumList leafBrushes)
+	{
+		var instance = worldRoot.AddComponent<NumListDebug>();
+		instance.listName = "Leaf Brushes";
+		instance.Init(leafBrushes);
 	}
 
 	private void LoadModels(Lump<Model> models)
@@ -166,15 +179,15 @@ public class BSPLoader
 		}
 	}
 
-	private void LoadOriginalFaces(Lump<Face> originalFaces)
-	{
-		for (var i = 0; i < originalFaces.Count; i++)
-		{
-			var instance = InstantiatePrefab<FaceDebug>("FaceDebug", i);
-			instance.name = $"OriginalFaceDebug_{i}";
-			instance.Init(bsp, originalFaces[i]);
-		}
-	}
+	//private void LoadOriginalFaces(Lump<Face> originalFaces)
+	//{
+	//	for (var i = 0; i < originalFaces.Count; i++)
+	//	{
+	//		var instance = InstantiatePrefab<FaceDebug>("FaceDebug", i);
+	//		instance.name = $"OriginalFaceDebug_{i}";
+	//		instance.Init(bsp, originalFaces[i]);
+	//	}
+	//}
 
 	private void LoadFaces(Lump<Face> faces)
 	{

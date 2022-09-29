@@ -1,3 +1,4 @@
+using LibBSP;
 using UnityEngine;
 
 public class PlaneDebug : MonoBehaviour
@@ -6,11 +7,11 @@ public class PlaneDebug : MonoBehaviour
 	public float distance;
 	public int type;
 
-	public void Init(Plane plane)
+	public void Init(PlaneBSP plane)
 	{
-		normal = plane.normal;
-		distance = plane.distance;
-		//type = plane.type;
+		normal = plane.Normal;
+		distance = plane.Distance;
+		type = plane.Type;
 		
 		var norm = normal.SwizzleYZ();
 		transform.position = norm * distance;

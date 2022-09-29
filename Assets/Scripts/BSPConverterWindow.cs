@@ -52,6 +52,12 @@ public class BSPConverterWindow : EditorWindow
 		if (GUILayout.Button("Load Source BSP"))
 			LoadBsp(sourceBspPath);
 
+		if (GUILayout.Button("Load Converted BSP"))
+			LoadBsp(outputPath);
+
+		GUILayout.Space(10);
+
+		GUI.backgroundColor = Color.green;
 		if (GUILayout.Button("Convert"))
 			Convert();
 	}
@@ -60,6 +66,8 @@ public class BSPConverterWindow : EditorWindow
 	{
 		var bspLoader = new BSPLoader(path);
 		bspLoader.Load();
+
+		Debug.Log("Loaded BSP: " + path);
 	}
 
 	private void Convert()

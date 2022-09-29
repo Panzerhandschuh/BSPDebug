@@ -13,7 +13,7 @@ public class LeafDebug : MonoBehaviour, IDebugReference
 	public int numLeafFaces;
 	public int firstLeafBrush;
 	public int numLeafBrushes;
-	//public int leafWaterDataId;
+	public int leafWaterDataId;
 
 	public FaceDebug[] leafFaceRefs;
 	public BrushDebug[] leafBrushRefs;
@@ -21,7 +21,7 @@ public class LeafDebug : MonoBehaviour, IDebugReference
 	private NumList leafFaces;
 	private NumList leafBrushes;
 
-	public void Init(BSP bsp, Leaf leaf)
+	public void Init(Leaf leaf)
 	{
 		contents = leaf.Contents;
 		cluster = leaf.Visibility;
@@ -33,10 +33,10 @@ public class LeafDebug : MonoBehaviour, IDebugReference
 		numLeafFaces = leaf.NumMarkFaceIndices;
 		firstLeafBrush = leaf.FirstMarkBrushIndex;
 		numLeafBrushes = leaf.NumMarkBrushIndices;
-		//leafWaterDataId = leaf.LeafWaterDataID;
+		leafWaterDataId = leaf.LeafWaterDataID;
 
-		leafFaces = bsp.LeafFaces;
-		leafBrushes = bsp.LeafBrushes;
+		leafFaces = leaf.Parent.Bsp.LeafFaces;
+		leafBrushes = leaf.Parent.Bsp.LeafBrushes;
 	}
 
 	public void InitReferences()
@@ -64,10 +64,18 @@ public class LeafDebug : MonoBehaviour, IDebugReference
 
 	private void OnDrawGizmosSelected()
 	{
+		DebugDraw();
+	}
+
+	public void DebugDraw()
+	{
 		var bounds = new Bounds();
 		bounds.min = mins.SwizzleYZ();
 		bounds.max = maxs.SwizzleYZ();
 
 		DebugExtension.DrawBounds(bounds, Color.red);
+
+		foreach (var faceRef in leafFaceRefs)
+			faceRef.DebugDraw();
 	}
 }
