@@ -51,6 +51,7 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 	public PlaneDebug planeRef;
 	public SurfaceEdgeDebug[] edgeRefs;
 	public TextureInfoDebug textureInfoRef;
+	public PrimitiveDebug[] primitiveRefs;
 
 	private NumList meshVerts;
 
@@ -129,6 +130,13 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 			if (textureInfoObj != null)
 				textureInfoRef = textureInfoObj.GetComponent<TextureInfoDebug>();
 		}
+
+		if (firstPrimitiveId > -1)
+		{
+			primitiveRefs = new PrimitiveDebug[numPrimitives];
+			for (var i = 0; i < numPrimitives; i++)
+				primitiveRefs[i] = GameObject.Find($"{nameof(PrimitiveDebug)}_{firstPrimitiveId + i}").GetComponent<PrimitiveDebug>();
+		}
 	}
 
 	private void OnDrawGizmosSelected()
@@ -145,23 +153,16 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 	private void DebugDrawQuake3()
 	{
 		// Mesh vertices
-		//Gizmos.color = Color.yellow;
-		//for (var i = 0; i < meshVertexRefs.Length; i += 3)
-		//{
-		//	Gizmos.DrawLine(meshVertexRefs[i].transform.position, meshVertexRefs[i + 1].transform.position);
-		//	Gizmos.DrawLine(meshVertexRefs[i + 1].transform.position, meshVertexRefs[i + 2].transform.position);
-		//	Gizmos.DrawLine(meshVertexRefs[i + 2].transform.position, meshVertexRefs[i].transform.position);
-		//}
-
-		// Vertices
 		Gizmos.color = Color.white;
-		for (var i = 0; i < vertexRefs.Length; i++)
+		for (var i = 0; i < numMeshVertices; i += 3)
 		{
-			var nextIndex = (i + 1) % vertexRefs.Length;
-			Gizmos.DrawLine(vertexRefs[i].transform.position, vertexRefs[nextIndex].transform.position);
+			var v1 = vertexRefs[meshVerts[firstMeshVertexIndex + i]];
+			var v2 = vertexRefs[meshVerts[firstMeshVertexIndex + i + 1]];
+			var v3 = vertexRefs[meshVerts[firstMeshVertexIndex + i + 2]];
 
-			var arrowDir = vertexRefs[nextIndex].transform.position - vertexRefs[i].transform.position;
-			DebugExtension.DrawArrow(vertexRefs[i].transform.position, arrowDir.normalized * 10f, Color.green);
+			Gizmos.DrawLine(v1.transform.position, v2.transform.position);
+			Gizmos.DrawLine(v2.transform.position, v3.transform.position);
+			Gizmos.DrawLine(v3.transform.position, v1.transform.position);
 		}
 	}
 
@@ -169,5 +170,8 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 	{
 		foreach (var edgeRef in edgeRefs)
 			edgeRef.DebugDraw();
+
+		foreach (var primitive in primitiveRefs)
+			primitive.DebugDraw();
 	}
 }

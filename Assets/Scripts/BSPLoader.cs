@@ -46,6 +46,8 @@ public class BSPLoader
 		//LoadLightVols(bsp.);
 		//if (bsp.VisibilityLoaded)
 		LoadVisibility(bsp.Visibility);
+		if (bsp.MapType.IsSubtypeOf(MapType.Source))
+			LoadPrimitives(bsp.Primitives);
 
 		LoadReferences();
 	}
@@ -205,6 +207,15 @@ public class BSPLoader
 
 		var instance = worldRoot.AddComponent<VisDataDebug>();
 		instance.Init(visibility);
+	}
+
+	private void LoadPrimitives(Lump<Primitive> primitives)
+	{
+		for (var i = 0; i < primitives.Count; i++)
+		{
+			var instance = InstantiatePrefab<PrimitiveDebug>("PrimitiveDebug", i);
+			instance.Init(primitives[i]);
+		}
 	}
 
 	private void LoadReferences()

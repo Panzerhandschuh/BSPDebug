@@ -19,4 +19,10 @@ public class VertexDebug : MonoBehaviour
 
 		transform.position = position.SwizzleYZ();
 	}
+
+	private void OnDrawGizmosSelected()
+	{
+		Gizmos.color = Color.green;
+		Gizmos.DrawWireCube(position.SwizzleYZ(), Vector3.one * 1f);
+	}
 }
