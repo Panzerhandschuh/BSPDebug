@@ -42,7 +42,7 @@ public class BSPLoader
 		//LoadMeshVerts(bsp.MeshVerts); // Ignore NumList
 		//LoadEffects(bsp.Effects);
 		LoadFaces(bsp.Faces);
-		//LoadLightmaps(bsp.Lightmaps);
+		LoadLightmaps(bsp.Lightmaps);
 		//LoadLightVols(bsp.);
 		//if (bsp.VisibilityLoaded)
 		LoadVisibility(bsp.Visibility);
@@ -66,7 +66,7 @@ public class BSPLoader
 	{
 		for (var i = 0; i < textures.Count; i++)
 		{
-			var instance = InstantiatePrefab<TextureDebug>("TextureDebug", i);
+			var instance = InstantiatePrefab<TextureDebug>(nameof(TextureDebug), i);
 			instance.Init(textures[i]);
 		}
 	}
@@ -75,7 +75,7 @@ public class BSPLoader
 	{
 		for (var i = 0; i < textureInfo.Count; i++)
 		{
-			var instance = InstantiatePrefab<TextureInfoDebug>("TextureInfoDebug", i);
+			var instance = InstantiatePrefab<TextureInfoDebug>(nameof(TextureInfoDebug), i);
 			instance.Init(textureInfo[i]);
 		}
 	}
@@ -84,7 +84,7 @@ public class BSPLoader
 	{
 		for (var i = 0; i < textureData.Count; i++)
 		{
-			var instance = InstantiatePrefab<TextureDataDebug>("TextureDataDebug", i);
+			var instance = InstantiatePrefab<TextureDataDebug>(nameof(TextureDataDebug), i);
 			instance.Init(bsp, textureData[i]);
 		}
 	}
@@ -118,7 +118,7 @@ public class BSPLoader
 		for (var i = 0; i < nodes.Count; i++)
 		{
 			var instance = InstantiatePrefab<NodeDebug>("NodeDebug", i);
-			instance.Init(bsp, nodes[i]);
+			instance.Init(nodes[i]);
 		}
 	}
 
@@ -196,8 +196,14 @@ public class BSPLoader
 		for (var i = 0; i < faces.Count; i++)
 		{
 			var instance = InstantiatePrefab<FaceDebug>("FaceDebug", i);
-			instance.Init(bsp, faces[i]);
+			instance.Init(faces[i]);
 		}
+	}
+
+	private void LoadLightmaps(Lightmaps lightmaps)
+	{
+		var instance = InstantiatePrefab<LightmapDebug>(nameof(LightmapDebug), 0);
+		instance.Init(lightmaps);
 	}
 
 	private void LoadVisibility(Visibility visibility)

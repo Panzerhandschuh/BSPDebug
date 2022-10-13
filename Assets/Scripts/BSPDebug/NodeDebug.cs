@@ -20,7 +20,7 @@ public class NodeDebug : MonoBehaviour, IDebugReference
 	public GameObject child2Ref;
 	public FaceDebug[] faceRefs;
 
-	public void Init(BSP bsp, Node node)
+	public void Init(Node node)
 	{
 		plane = node.PlaneIndex;
 		children[0] = node.Child1Index;
@@ -33,7 +33,7 @@ public class NodeDebug : MonoBehaviour, IDebugReference
 		numFaces = node.NumFaceIndices;
 		area = node.AreaIndex;
 
-		var bspPlane = bsp.Planes[plane];
+		var bspPlane = node.Parent.Bsp.Planes[plane];
 		var norm = bspPlane.Normal.SwizzleYZ();
 		transform.position = norm * bspPlane.Distance;
 		transform.rotation = Quaternion.LookRotation(norm) * Quaternion.AngleAxis(90f, Vector3.right);

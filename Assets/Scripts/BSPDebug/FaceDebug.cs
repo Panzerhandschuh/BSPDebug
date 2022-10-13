@@ -52,10 +52,19 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 	public SurfaceEdgeDebug[] edgeRefs;
 	public TextureInfoDebug textureInfoRef;
 	public PrimitiveDebug[] primitiveRefs;
+	public Texture2D lightmapTexture;
 
 	private NumList meshVerts;
 
-	public void Init(BSP bsp, Face face)
+	public void Init(Face face)
+	{
+		if (face.Parent.Bsp.MapType.IsSubtypeOf(MapType.Quake3))
+			InitQuake3(face);
+		else if (face.Parent.Bsp.MapType.IsSubtypeOf(MapType.Source))
+			InitSource(face);
+	}
+
+	private void InitQuake3(Face face)
 	{
 		texture = face.TextureIndex;
 		effect = face.Effect;
@@ -73,7 +82,11 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 		normal = face.Normal;
 		size = face.PatchSize;
 
-		// Source only
+		meshVerts = face.Parent.Bsp.Indices;
+	}
+
+	private void InitSource(Face face)
+	{
 		planeIndex = face.PlaneIndex;
 		side = face.PlaneSide;
 		onNode = face.IsOnNode;
@@ -92,7 +105,60 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 		firstPrimitiveId = face.FirstPrimitive;
 		smoothingGroups = face.SmoothingGroups;
 
-		meshVerts = bsp.Indices;
+		// TODO: Source BSP version 20 uses lump 53 instead?
+		InitLightmapSource(face);
+	}
+
+	private void InitLightmapSource(Face face)
+	{
+		var lightmap = face.Parent.Bsp.Lightmaps;
+		if (lightmap.Data.Length == 0)
+			return;
+		
+		var lightmapSize = new Vector2(face.LightmapSize.x + 1, face.LightmapSize.y + 1);
+		var offset = face.Lightmap;
+		lightmapTexture = new Texture2D((int)lightmapSize.x, (int)lightmapSize.y);
+
+		for (var x = 0; x < (int)lightmapSize.x; x++)
+		{
+			for (var y = 0; y < (int)lightmapSize.y; y++)
+			{
+				var index = x + y * (int)lightmapSize.x;
+				var r = lightmap.Data[offset + index * 4 + 0];
+				var g = lightmap.Data[offset + index * 4 + 1];
+				var b = lightmap.Data[offset + index * 4 + 2];
+				var exp = (sbyte)lightmap.Data[offset + index * 4 + 3];
+
+				var color = new Color(
+					TexLightToLinear(r, exp),
+					TexLightToLinear(g, exp),
+					TexLightToLinear(b, exp),
+					1f);
+				//var color = new Color32(r, g, b, 255);
+				lightmapTexture.SetPixel(x, y, color);
+			}
+		}
+
+		lightmapTexture.Apply();
+	}
+
+	private float TexLightToLinear(byte color, int exponent)
+	{
+		return color * (Mathf.Pow(2, exponent) / 255f);
+	}
+
+	private int GetNumLightStyles(Face face)
+	{
+		const int maxLightStyles = 4;
+		
+		int lightstyles;
+		for (lightstyles = 0; lightstyles < maxLightStyles; lightstyles++)
+		{
+			if (face.LightmapStyles[lightstyles] == 255)
+				break;
+		}
+
+		return lightstyles;
 	}
 
 	public void InitReferences()
