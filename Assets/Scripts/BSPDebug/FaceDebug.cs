@@ -230,6 +230,16 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 			Gizmos.DrawLine(v2.transform.position, v3.transform.position);
 			Gizmos.DrawLine(v3.transform.position, v1.transform.position);
 		}
+
+		// Surface edges
+		//Gizmos.color = Color.white;
+		//for (var i = 0; i < numVertices; i++)
+		//{
+		//	var v1 = vertexRefs[i];
+		//	var v2 = vertexRefs[(i + 1) % numVertices];
+
+		//	Gizmos.DrawLine(v2.transform.position, v1.transform.position);
+		//}
 	}
 
 	private void DebugDrawSource()
