@@ -20,7 +20,11 @@ public class PlaneDebug : MonoBehaviour
 
 	private void OnDrawGizmosSelected()
 	{
-		Gizmos.color = Color.blue;
-		Gizmos.DrawRay(transform.position, transform.up * 10f);
+		DrawPlane();
+	}
+
+	public void DrawPlane()
+	{
+		DebugUtil.DrawPlane(transform.position, normal.SwizzleYZ(), new Vector2(25f, 25f));
 	}
 }

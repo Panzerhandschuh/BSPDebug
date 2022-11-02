@@ -23,7 +23,7 @@ public class TextureInfoDebug : MonoBehaviour, IDebugReference
 	public void InitReferences()
 	{
 		if (textureDataIndex > -1)
-			textureDataRef = GameObject.Find($"TextureDataDebug_{textureDataIndex}").GetComponent<TextureDataDebug>();
+			textureDataRef = ReferenceFinder.Find<TextureDataDebug>(transform.parent, textureDataIndex);
 	}
 
 	private void OnDrawGizmosSelected()

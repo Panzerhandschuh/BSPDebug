@@ -26,14 +26,27 @@ public class BrushSideDebug : MonoBehaviour, IDebugReference
 
 	public void InitReferences()
 	{
-		planeRef = GameObject.Find($"{nameof(PlaneDebug)}_{planeIndex}").GetComponent<PlaneDebug>();
+		planeRef = ReferenceFinder.Find<PlaneDebug>(transform.parent, planeIndex);
 		transform.position = planeRef.transform.position;
 		transform.rotation = planeRef.transform.rotation;
 
 		// TODO: Lookup textures from Textures lump for quake
 		if (bspMapType.IsSubtypeOf(MapType.Quake3))
-			textureRef = GameObject.Find($"{nameof(TextureDebug)}_{textureIndex}").GetComponent<TextureDebug>();
+			textureRef = ReferenceFinder.Find<TextureDebug>(transform.parent, textureIndex);
 		else if (bspMapType.IsSubtypeOf(MapType.Source))
-			textureInfoRef = GameObject.Find($"{nameof(TextureInfoDebug)}_{textureIndex}").GetComponent<TextureInfoDebug>();
+		{
+			if (textureIndex >= 0)
+				textureInfoRef = ReferenceFinder.Find<TextureInfoDebug>(transform.parent, textureIndex);
+		}
+	}
+
+	private void OnDrawGizmosSelected()
+	{
+		DrawBrushSide();
+	}
+
+	public void DrawBrushSide()
+	{
+		planeRef.DrawPlane();
 	}
 }

@@ -5,14 +5,14 @@ public class ModelDebug : MonoBehaviour, IDebugReference
 {
     public Vector3 mins;
     public Vector3 maxs;
-    public int face;
+    public int faceIndex;
     public int numFaces;
-    public int brush;
+    public int brushIndex;
     public int numBrushes;
 
 	// Source only
 	public Vector3 origin;
-	public int headNode;
+	public int headNodeIndex;
 
 	public FaceDebug[] faceRefs;
     public BrushDebug[] brushRefs;
@@ -22,30 +22,30 @@ public class ModelDebug : MonoBehaviour, IDebugReference
 	{
 		mins = model.Minimums;
 		maxs = model.Maximums;
-		face = model.FirstFaceIndex;
+		faceIndex = model.FirstFaceIndex;
 		numFaces = model.NumFaces;
-		brush = model.FirstBrushIndex;
+		brushIndex = model.FirstBrushIndex;
 		numBrushes = model.NumBrushes;
 
 		origin = model.Origin;
-		headNode = model.HeadNodeIndex;
+		headNodeIndex = model.HeadNodeIndex;
 	}
 
 	public void InitReferences()
 	{
 		faceRefs = new FaceDebug[numFaces];
 		for (int i = 0; i < numFaces; i++)
-			faceRefs[i] = GameObject.Find($"{nameof(FaceDebug)}_{face + i}").GetComponent<FaceDebug>();
+			faceRefs[i] = ReferenceFinder.Find<FaceDebug>(transform.parent, faceIndex + i);
 
 		if (numBrushes > 0)
 		{
 			brushRefs = new BrushDebug[numBrushes];
 			for (int i = 0; i < numBrushes; i++)
-				brushRefs[i] = GameObject.Find($"{nameof(BrushDebug)}_{brush + i}").GetComponent<BrushDebug>();
+				brushRefs[i] = ReferenceFinder.Find<BrushDebug>(transform.parent, brushIndex + i);
 		}
 
-		if (headNode > -1)
-			headNodeRef = GameObject.Find($"{nameof(NodeDebug)}_{headNode}").GetComponent<NodeDebug>();
+		if (headNodeIndex > -1)
+			headNodeRef = ReferenceFinder.Find<NodeDebug>(transform.parent, headNodeIndex);
 	}
 
 	private void OnDrawGizmosSelected()

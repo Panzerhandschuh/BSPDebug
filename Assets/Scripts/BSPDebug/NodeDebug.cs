@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class NodeDebug : MonoBehaviour, IDebugReference
 {
-	public int plane; // Indicates the plane that slices this node into separate nodes/leaves
+	public int planeIndex; // Indicates the plane that slices this node into separate nodes/leaves
 	public int[] children = new int[2];
     public Vector3 mins;
     public Vector3 maxs;
@@ -22,7 +22,7 @@ public class NodeDebug : MonoBehaviour, IDebugReference
 
 	public void Init(Node node)
 	{
-		plane = node.PlaneIndex;
+		planeIndex = node.PlaneIndex;
 		children[0] = node.Child1Index;
 		children[1] = node.Child2Index;
 		mins = node.Minimums;
@@ -33,7 +33,7 @@ public class NodeDebug : MonoBehaviour, IDebugReference
 		numFaces = node.NumFaceIndices;
 		area = node.AreaIndex;
 
-		var bspPlane = node.Parent.Bsp.Planes[plane];
+		var bspPlane = node.Parent.Bsp.Planes[planeIndex];
 		var norm = bspPlane.Normal.SwizzleYZ();
 		transform.position = norm * bspPlane.Distance;
 		transform.rotation = Quaternion.LookRotation(norm) * Quaternion.AngleAxis(90f, Vector3.right);
@@ -41,7 +41,7 @@ public class NodeDebug : MonoBehaviour, IDebugReference
 
 	public void InitReferences()
 	{
-		planeRef = GameObject.Find($"PlaneDebug_{plane}").GetComponent<PlaneDebug>();
+		planeRef = ReferenceFinder.Find<PlaneDebug>(transform.parent, planeIndex);
 		child1Ref = FindChild(children[0]);
 		child2Ref = FindChild(children[1]);
 
@@ -49,16 +49,16 @@ public class NodeDebug : MonoBehaviour, IDebugReference
 		{
 			faceRefs = new FaceDebug[numFaces];
 			for (int i = 0; i < numFaces; i++)
-				faceRefs[i] = GameObject.Find($"{nameof(FaceDebug)}_{firstFaceIndex + i}").GetComponent<FaceDebug>();
+				faceRefs[i] = ReferenceFinder.Find<FaceDebug>(transform.parent, firstFaceIndex + i);
 		}
 	}
 
 	private GameObject FindChild(int childIndex)
 	{
 		if (childIndex > 0) // Node index
-			return GameObject.Find($"{nameof(NodeDebug)}_{childIndex}");
+			return ReferenceFinder.Find<NodeDebug>(transform.parent, childIndex).gameObject;
 		else // Leaf index
-			return GameObject.Find($"{nameof(LeafDebug)}_{-(childIndex + 1)}");
+			return ReferenceFinder.Find<LeafDebug>(transform.parent, -(childIndex + 1)).gameObject;
 	}
 
 	private void OnDrawGizmosSelected()

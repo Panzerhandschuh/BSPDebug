@@ -21,7 +21,6 @@ public class BSPLoaderWindow : EditorWindow
 		GUILayout.Label("Loads a Quake 3 or Source Engine BSP file.");
 		GUILayout.Space(10);
 
-		GUILayout.Label("Load BSP", EditorStyles.boldLabel);
 		quakeFilePath = EditorGUILayout.TextField(quakeFilePath);
 		if (GUILayout.Button("Browse"))
 			quakeFilePath = EditorUtility.OpenFilePanel("Select BSP File", "", "bsp");

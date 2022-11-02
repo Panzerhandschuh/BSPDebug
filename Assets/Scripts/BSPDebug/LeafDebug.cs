@@ -47,7 +47,7 @@ public class LeafDebug : MonoBehaviour, IDebugReference
 			for (int i = 0; i < numLeafFaces; i++)
 			{
 				var faceIndex = (int)leafFaces[firstLeafFace + i];
-				leafFaceRefs[i] = GameObject.Find($"{nameof(FaceDebug)}_{faceIndex}").GetComponent<FaceDebug>();
+				leafFaceRefs[i] = ReferenceFinder.Find<FaceDebug>(transform.parent, faceIndex);
 			}
 		}
 
@@ -57,7 +57,7 @@ public class LeafDebug : MonoBehaviour, IDebugReference
 			for (int i = 0; i < numLeafBrushes; i++)
 			{
 				var brushIndex = (int)leafBrushes[firstLeafBrush + i];
-				leafBrushRefs[i] = GameObject.Find($"{nameof(BrushDebug)}_{brushIndex}").GetComponent<BrushDebug>();
+				leafBrushRefs[i] = ReferenceFinder.Find<BrushDebug>(transform.parent, brushIndex);
 			}
 		}
 	}

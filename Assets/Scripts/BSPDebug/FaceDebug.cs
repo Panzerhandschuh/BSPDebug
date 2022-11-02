@@ -54,13 +54,15 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 	public PrimitiveDebug[] primitiveRefs;
 	public Texture2D lightmapTexture;
 
+	private MapType mapType;
 	private NumList meshVerts;
 
 	public void Init(Face face)
 	{
-		if (face.Parent.Bsp.MapType.IsSubtypeOf(MapType.Quake3))
+		mapType = face.Parent.Bsp.MapType;
+		if (mapType.IsSubtypeOf(MapType.Quake3))
 			InitQuake3(face);
-		else if (face.Parent.Bsp.MapType.IsSubtypeOf(MapType.Source))
+		else if (mapType.IsSubtypeOf(MapType.Source))
 			InitSource(face);
 	}
 
@@ -163,45 +165,48 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 
 	public void InitReferences()
 	{
-		if (firstVertexIndex > -1)
+		if (mapType.IsSubtypeOf(MapType.Source))
 		{
-			vertexRefs = new VertexDebug[numVertices];
-			for (var i = 0; i < numVertices; i++)
-				vertexRefs[i] = GameObject.Find($"VertexDebug_{firstVertexIndex + i}").GetComponent<VertexDebug>();
-		}
+			if (planeIndex > -1)
+				planeRef = ReferenceFinder.Find<PlaneDebug>(transform.parent, planeIndex);
 
-		if (firstMeshVertexIndex > -1)
-		{
-			meshVertexRefs = new VertexDebug[numMeshVertices];
-			for (var i = 0; i < numMeshVertices; i++)
+			if (firstEdgeIndex > -1)
 			{
-				var meshVertIndex = (int)meshVerts[firstMeshVertexIndex + i];
-				meshVertexRefs[i] = GameObject.Find($"VertexDebug_{meshVertIndex}").GetComponent<VertexDebug>();
+				edgeRefs = new SurfaceEdgeDebug[numEdges];
+				for (var i = 0; i < numEdges; i++)
+					edgeRefs[i] = ReferenceFinder.Find<SurfaceEdgeDebug>(transform.parent, firstEdgeIndex + i);
+			}
+
+			if (textureInfoIndex > -1)
+			{
+				textureInfoRef = ReferenceFinder.Find<TextureInfoDebug>(transform.parent, textureInfoIndex);
+			}
+
+			if (firstPrimitiveId > -1)
+			{
+				primitiveRefs = new PrimitiveDebug[numPrimitives];
+				for (var i = 0; i < numPrimitives; i++)
+					primitiveRefs[i] = ReferenceFinder.Find<PrimitiveDebug>(transform.parent, firstPrimitiveId + i);
 			}
 		}
-
-		if (planeIndex > -1)
-			planeRef = GameObject.Find($"PlaneDebug_{planeIndex}").GetComponent<PlaneDebug>();
-
-		if (firstEdgeIndex > -1)
+		else
 		{
-			edgeRefs = new SurfaceEdgeDebug[numEdges];
-			for (var i = 0; i < numEdges; i++)
-				edgeRefs[i] = GameObject.Find($"{nameof(SurfaceEdgeDebug)}_{firstEdgeIndex + i}").GetComponent<SurfaceEdgeDebug>();
-		}
+			if (firstVertexIndex > -1)
+			{
+				vertexRefs = new VertexDebug[numVertices];
+				for (var i = 0; i < numVertices; i++)
+					vertexRefs[i] = ReferenceFinder.Find<VertexDebug>(transform.parent, firstVertexIndex + i);
+			}
 
-		if (textureInfoIndex > -1)
-		{
-			var textureInfoObj = GameObject.Find($"TextureInfoDebug_{textureInfoIndex}");
-			if (textureInfoObj != null)
-				textureInfoRef = textureInfoObj.GetComponent<TextureInfoDebug>();
-		}
-
-		if (firstPrimitiveId > -1)
-		{
-			primitiveRefs = new PrimitiveDebug[numPrimitives];
-			for (var i = 0; i < numPrimitives; i++)
-				primitiveRefs[i] = GameObject.Find($"{nameof(PrimitiveDebug)}_{firstPrimitiveId + i}").GetComponent<PrimitiveDebug>();
+			if (firstMeshVertexIndex > -1)
+			{
+				meshVertexRefs = new VertexDebug[numMeshVertices];
+				for (var i = 0; i < numMeshVertices; i++)
+				{
+					var meshVertIndex = (int)meshVerts[firstMeshVertexIndex + i];
+					meshVertexRefs[i] = ReferenceFinder.Find<VertexDebug>(transform.parent, meshVertIndex);
+				}
+			}
 		}
 	}
 
@@ -212,8 +217,19 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 
 	public void DebugDraw()
 	{
-		DebugDrawQuake3();
-		DebugDrawSource();
+		if (mapType.IsSubtypeOf(MapType.Source))
+			DebugDrawSource();
+		else
+			DebugDrawQuake3();
+	}
+
+	private void DebugDrawSource()
+	{
+		foreach (var edgeRef in edgeRefs)
+			edgeRef.DebugDraw();
+
+		foreach (var primitive in primitiveRefs)
+			primitive.DebugDraw();
 	}
 
 	private void DebugDrawQuake3()
@@ -240,14 +256,5 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 
 		//	Gizmos.DrawLine(v2.transform.position, v1.transform.position);
 		//}
-	}
-
-	private void DebugDrawSource()
-	{
-		foreach (var edgeRef in edgeRefs)
-			edgeRef.DebugDraw();
-
-		foreach (var primitive in primitiveRefs)
-			primitive.DebugDraw();
 	}
 }

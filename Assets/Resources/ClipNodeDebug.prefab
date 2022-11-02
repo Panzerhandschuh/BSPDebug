@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4794235325409426448}
-  - component: {fileID: 1564817057562700563}
+  - component: {fileID: -5439004664031141523}
   m_Layer: 0
-  m_Name: FaceDebug
+  m_Name: ClipNodeDebug
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1564817057562700563
+--- !u!114 &-5439004664031141523
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,46 +41,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4794235325409426449}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2470e59475dd2df44b2718e7aea78a55, type: 3}
+  m_Script: {fileID: 11500000, guid: e95904ad9e8e3894a878b5403d42199d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  texture: 0
-  effect: 0
-  type: 0
-  firstVertexIndex: 0
-  numVertices: 0
-  firstMeshVertexIndex: 0
-  numMeshVertices: 0
-  lightmapIndex: 0
-  lightmapStart: {x: 0, y: 0}
-  lightmapSize: {x: 0, y: 0}
-  lightmapOrigin: {x: 0, y: 0, z: 0}
-  lightmapVecs:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  normal: {x: 0, y: 0, z: 0}
-  size: {x: 0, y: 0}
-  planeIndex: 0
-  side: 0
-  onNode: 0
-  firstEdgeIndex: 0
-  numEdges: 0
-  textureInfoIndex: 0
-  dispInfo: 0
-  surfaceFogVolumeId: 0
-  styles: 00000000
-  lightOffset: 0
-  area: 0
-  lightmapTextureMinsInLuxels: {x: 0, y: 0}
-  lightmapTextureSizeInLuxels: {x: 0, y: 0}
-  originalFace: 0
-  numPrimitives: 0
-  firstPrimitiveId: 0
-  smoothingGroups: 0
-  vertexRefs: []
-  meshVertexRefs: []
+  planeNum: 0
+  child1: 0
+  child2: 0
   planeRef: {fileID: 0}
-  edgeRefs: []
-  textureInfoRef: {fileID: 0}
-  primitiveRefs: []
-  lightmapTexture: {fileID: 0}
+  child1Ref: {fileID: 0}
+  child2Ref: {fileID: 0}

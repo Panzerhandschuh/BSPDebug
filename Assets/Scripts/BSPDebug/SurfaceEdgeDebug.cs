@@ -30,8 +30,8 @@ public class SurfaceEdgeDebug : MonoBehaviour, IDebugReference
 
 	public void InitReferences()
 	{
-		vertexRef1 = GameObject.Find($"{nameof(VertexDebug)}_{vertex1}").GetComponent<VertexDebug>();
-		vertexRef2 = GameObject.Find($"{nameof(VertexDebug)}_{vertex2}").GetComponent<VertexDebug>();
+		vertexRef1 = ReferenceFinder.Find<VertexDebug>(transform.parent, vertex1);
+		vertexRef2 = ReferenceFinder.Find<VertexDebug>(transform.parent, vertex2);
 	}
 
 	private void OnDrawGizmosSelected()

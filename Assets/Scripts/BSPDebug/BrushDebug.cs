@@ -5,7 +5,7 @@ public class BrushDebug : MonoBehaviour, IDebugReference
 {
 	public int brushSide;
 	public int numBrushSides;
-	public int texture; // Quake only
+	public int textureIndex; // Quake only
 	public int contents; // Source only
 
 	public BrushSideDebug[] brushSideRefs;
@@ -14,7 +14,7 @@ public class BrushDebug : MonoBehaviour, IDebugReference
 	{
 		brushSide = brush.FirstSideIndex;
 		numBrushSides = brush.NumSides;
-		texture = brush.TextureIndex;
+		textureIndex = brush.TextureIndex;
 		contents = brush.Contents;
 	}
 
@@ -22,15 +22,12 @@ public class BrushDebug : MonoBehaviour, IDebugReference
 	{
 		brushSideRefs = new BrushSideDebug[numBrushSides];
 		for (int i = 0; i < numBrushSides; i++)
-			brushSideRefs[i] = GameObject.Find($"{nameof(BrushSideDebug)}_{brushSide + i}").GetComponent<BrushSideDebug>();
+			brushSideRefs[i] = ReferenceFinder.Find<BrushSideDebug>(transform.parent, brushSide + i);
 	}
 
 	private void OnDrawGizmosSelected()
 	{
 		foreach (var brushSide in brushSideRefs)
-		{
-			var plane = brushSide.planeRef.GetComponent<PlaneDebug>();
-			Gizmos.DrawWireCube(plane.transform.position, Vector3.one * 10f);
-		}
+			brushSide.DrawBrushSide();
 	}
 }
