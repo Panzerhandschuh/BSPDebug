@@ -20,10 +20,10 @@ public class PlaneDebug : MonoBehaviour
 
 	private void OnDrawGizmosSelected()
 	{
-		DrawPlane();
+		DebugDraw();
 	}
 
-	public void DrawPlane()
+	public void DebugDraw()
 	{
 		DebugUtil.DrawPlane(transform.position, normal.SwizzleYZ(), new Vector2(25f, 25f));
 	}

@@ -4,7 +4,9 @@ using UnityEngine;
 public class TextureInfoDebug : MonoBehaviour, IDebugReference
 {
 	public Vector3[] textureVecs = new Vector3[2];
+	public Vector2 textureTranslation;
 	public Vector3[] lightmapVecs = new Vector3[2];
+	public Vector2 lightmapTranslation;
 	public int flags;
 	public int textureDataIndex;
 
@@ -14,8 +16,10 @@ public class TextureInfoDebug : MonoBehaviour, IDebugReference
 	{
 		textureVecs[0] = textureInfo.UAxis;
 		textureVecs[1] = textureInfo.VAxis;
+		textureTranslation = textureInfo.Translation;
 		lightmapVecs[0] = textureInfo.LightmapUAxis;
 		lightmapVecs[1] = textureInfo.LightmapVAxis;
+		lightmapTranslation = textureInfo.LightmapTranslation;
 		flags = textureInfo.Flags;
 		textureDataIndex = textureInfo.TextureIndex;
 	}

@@ -1,4 +1,7 @@
 using LibBSP;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class FaceDebug : MonoBehaviour, IDebugReference
@@ -26,6 +29,8 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 	public Vector3[] lightmapVecs = new Vector3[2];
 	public Vector3 normal;
 	public Vector2 size;
+	public Vector2 qLightmapStart;
+	public Vector2 qLightmapEnd;
 
 	// Source format
 	public int planeIndex;
@@ -46,6 +51,11 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 	public int firstPrimitiveId;
 	public int smoothingGroups;
 
+	public Vector3[] vertexNormals;
+
+	// Lightmap uvs for each face edge vertex
+	public List<Vector2> lightmapTexCoords;
+
 	public VertexDebug[] vertexRefs;
 	public VertexDebug[] meshVertexRefs;
 	public PlaneDebug planeRef;
@@ -55,15 +65,18 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 	public Texture2D lightmapTexture;
 
 	private MapType mapType;
+	private Lump<UIVertex> vertices;
 	private NumList meshVerts;
 
-	public void Init(Face face)
+	public static int vertexCounter = 0; // Used for tracking vertex normals
+
+	public void Init(Face face, int faceIndex)
 	{
 		mapType = face.Parent.Bsp.MapType;
 		if (mapType.IsSubtypeOf(MapType.Quake3))
 			InitQuake3(face);
 		else if (mapType.IsSubtypeOf(MapType.Source))
-			InitSource(face);
+			InitSource(face, faceIndex);
 	}
 
 	private void InitQuake3(Face face)
@@ -84,10 +97,13 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 		normal = face.Normal;
 		size = face.PatchSize;
 
+		vertices = face.Parent.Bsp.Vertices;
 		meshVerts = face.Parent.Bsp.Indices;
+
+		InitLightmapQuake3(face);
 	}
 
-	private void InitSource(Face face)
+	private void InitSource(Face face, int faceIndex)
 	{
 		planeIndex = face.PlaneIndex;
 		side = face.PlaneSide;
@@ -107,8 +123,18 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 		firstPrimitiveId = face.FirstPrimitive;
 		smoothingGroups = face.SmoothingGroups;
 
+		vertexNormals = new Vector3[numEdges];
+		for (var i = 0; i < numEdges; i++)
+		{
+			var normalIndex = (int)face.Parent.Bsp.Indices[vertexCounter];
+			vertexNormals[i] = face.Parent.Bsp.Normals[normalIndex];
+
+			vertexCounter++;
+		}
+
 		// TODO: Source BSP version 20 uses lump 53 instead?
 		InitLightmapSource(face);
+		ComputeLightmapTexCoords(face);
 	}
 
 	private void InitLightmapSource(Face face)
@@ -138,6 +164,81 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 					1f);
 				//var color = new Color32(r, g, b, 255);
 				lightmapTexture.SetPixel(x, y, color);
+			}
+		}
+
+		lightmapTexture.Apply();
+	}
+
+	private void ComputeLightmapTexCoords(Face face)
+	{
+		var bsp = face.Parent.Bsp;
+		var texInfo = bsp.TextureInfo[face.TextureInfoIndex];
+		var lightmapUAxis = texInfo.LightmapUAxis;
+		var lightmapVAxis = texInfo.LightmapVAxis;
+		var lightmapTranslation = texInfo.LightmapTranslation;
+
+		var lightmapStart = face.LightmapStart;
+		var lightmapSize = face.LightmapSize;
+
+		foreach (var edgeIndex in face.EdgeIndices)
+		{
+			var edge = bsp.Edges[Mathf.Abs(edgeIndex)];
+			var vertex = edge.FirstVertex.position;
+
+			var s = (Vector3.Dot(vertex, lightmapUAxis) + lightmapTranslation.x - lightmapStart.x) / lightmapSize.x;
+			var t = (Vector3.Dot(vertex, lightmapVAxis) + lightmapTranslation.y - lightmapStart.y) / lightmapSize.y;
+
+			lightmapTexCoords.Add(new Vector2(s, t));
+		}
+	}
+
+	private void InitLightmapQuake3(Face face)
+	{
+		var lightmap = face.Parent.Bsp.Lightmaps;
+
+		const int lmSize = 128;
+		var lightmapTotalSize = lmSize * lmSize * 3;
+		var lmOffset = face.Lightmap * lightmapTotalSize;
+
+		var uvMin = new Vector2(1f, 1f);
+		var uvMax = new Vector2(0f, 0f);
+		var vertices = face.Vertices.ToArray();
+		foreach (var vert in vertices)
+		{
+			if (vert.uv1.x < uvMin.x)
+				uvMin.x = vert.uv1.x;
+			if (vert.uv1.y < uvMin.y)
+				uvMin.y = vert.uv1.y;
+
+			if (vert.uv1.x > uvMax.x)
+				uvMax.x = vert.uv1.x;
+			if (vert.uv1.y > uvMax.y)
+				uvMax.y = vert.uv1.y;
+		}
+
+		var lmStart = new Vector2Int((int)Math.Floor(uvMin.x * lmSize), (int)Math.Floor(uvMin.y * lmSize));
+		var lmEnd = new Vector2Int((int)Math.Ceiling(uvMax.x * lmSize), (int)Math.Ceiling(uvMax.y * lmSize));
+		var lmTexSize = lmEnd - lmStart;
+
+		qLightmapStart = lmStart;
+		qLightmapEnd = lmEnd;
+
+		if (lmTexSize.x == 0 || lmTexSize.y == 0)
+			return;
+
+		lightmapTexture = new Texture2D(lmTexSize.x, lmTexSize.y);
+		for (var x = lmStart.x; x < lmEnd.x; x++)
+		{
+			for (var y = lmStart.y; y < lmEnd.y; y++)
+			{
+				var index = x + y * lmSize;
+				var r = lightmap.Data[lmOffset + index * 3 + 0];
+				var g = lightmap.Data[lmOffset + index * 3 + 1];
+				var b = lightmap.Data[lmOffset + index * 3 + 2];
+
+				var color = new Color32(r, g, b, 255);
+				lightmapTexture.SetPixel(x - lmStart.x, y - lmStart.y, color);
 			}
 		}
 
@@ -225,6 +326,8 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 
 	private void DebugDrawSource()
 	{
+		planeRef.DebugDraw();
+
 		foreach (var edgeRef in edgeRefs)
 			edgeRef.DebugDraw();
 
@@ -234,7 +337,24 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 
 	private void DebugDrawQuake3()
 	{
-		// Mesh vertices
+		if (type == FaceType.Polygon)
+			DebugDrawQuake3Polygon();
+		else if (type == FaceType.Patch)
+			DebugDrawQuake3Patch();
+
+		// Surface edges
+		//Gizmos.color = Color.white;
+		//for (var i = 0; i < numVertices; i++)
+		//{
+		//	var v1 = vertexRefs[i];
+		//	var v2 = vertexRefs[(i + 1) % numVertices];
+
+		//	Gizmos.DrawLine(v2.transform.position, v1.transform.position);
+		//}
+	}
+
+	private void DebugDrawQuake3Polygon()
+	{
 		Gizmos.color = Color.white;
 		for (var i = 0; i < numMeshVertices; i += 3)
 		{
@@ -246,15 +366,63 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 			Gizmos.DrawLine(v2.transform.position, v3.transform.position);
 			Gizmos.DrawLine(v3.transform.position, v1.transform.position);
 		}
+	}
 
-		// Surface edges
-		//Gizmos.color = Color.white;
-		//for (var i = 0; i < numVertices; i++)
-		//{
-		//	var v1 = vertexRefs[i];
-		//	var v2 = vertexRefs[(i + 1) % numVertices];
+	private void DebugDrawQuake3Patch()
+	{
+		Gizmos.color = Color.green;
 
-		//	Gizmos.DrawLine(v2.transform.position, v1.transform.position);
-		//}
+		for (var y = 0; y < size.y - 1; y += 2)
+		{
+			for (var x = 0; x < size.x - 1; x += 2)
+			{
+				var patchStartVertex = firstVertexIndex + x + y * (int)size.x;
+				DrawPatch(patchStartVertex);
+			}
+		}
+	}
+
+	private void DrawPatch(int patchStartVertex)
+	{
+		var dispPower = 2; // Displacement power
+		var subdiv = (1 << dispPower) + 1;
+		for (var i = 0; i < subdiv; i++)
+		{
+			var widthT = i / (subdiv - 1f);
+			for (var j = 0; j < subdiv; j++)
+			{
+				var heightT = j / (subdiv - 1f);
+
+				var bp = BezierPatch(patchStartVertex, widthT, heightT, (int)size.x);
+				Gizmos.DrawWireCube(bp.SwizzleYZ(), Vector3.one * 5f);
+			}
+		}
+	}
+
+	private Vector3 BezierPatch(int firstVertex, float widthT, float heightT, int patchWidth)
+	{
+		var bi = Bezier(widthT);
+		var bj = Bezier(heightT);
+
+		var result = Vector3.zero;
+		for (var i = 0; i < 3; i++)
+		{
+			for (var j = 0; j < 3; j++)
+			{
+				result += vertices[firstVertex + i + j * patchWidth].position * bi[i] * bj[j];
+			}
+		}
+
+		return result;
+	}
+
+	private float[] Bezier(float t)
+	{
+		return new float[]
+		{
+			(1f - t) * (1f - t),
+			2f * t * (1f - t),
+			t * t
+		};
 	}
 }

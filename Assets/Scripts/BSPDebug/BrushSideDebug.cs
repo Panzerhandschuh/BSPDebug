@@ -47,6 +47,6 @@ public class BrushSideDebug : MonoBehaviour, IDebugReference
 
 	public void DrawBrushSide()
 	{
-		planeRef.DrawPlane();
+		planeRef.DebugDraw();
 	}
 }

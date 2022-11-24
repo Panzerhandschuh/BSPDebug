@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4794235325409426448}
-  - component: {fileID: -5439004664031141523}
+  - component: {fileID: -7933881761385213079}
   m_Layer: 0
-  m_Name: ClipNodeDebug
+  m_Name: DisplacementDebug
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-5439004664031141523
+--- !u!114 &-7933881761385213079
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,12 +41,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 4794235325409426449}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e95904ad9e8e3894a878b5403d42199d, type: 3}
+  m_Script: {fileID: 11500000, guid: 2f0fd9f11063c7b4ebbb8e3ce364e32e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  planeNum: 0
-  child1: 0
-  child2: 0
-  planeRef: {fileID: 0}
-  child1Ref: {fileID: 0}
-  child2Ref: {fileID: 0}
+  startPosition: {x: 0, y: 0, z: 0}
+  dispVertStart: 0
+  dispTriStart: 0
+  power: 0
+  minTess: 0
+  smoothingAngle: 0
+  contents: 0
+  mapFace: 0
+  lightmapAlphaStart: 0
+  lightmapSamplePositionStart: 0
+  allowedVerts: 

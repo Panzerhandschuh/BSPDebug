@@ -23,6 +23,6 @@ public class VertexDebug : MonoBehaviour
 	private void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.green;
-		Gizmos.DrawWireCube(position.SwizzleYZ(), Vector3.one * 1f);
+		Gizmos.DrawWireCube(position.SwizzleYZ(), Vector3.one * 5f);
 	}
 }

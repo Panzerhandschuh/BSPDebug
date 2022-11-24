@@ -29,10 +29,6 @@ public class BSPLoader
 			LoadTextureDataStringTable(bsp.TextureTable);
 			LoadEdges(bsp.FaceEdges);
 		}
-		if (bsp.MapType.IsSubtypeOf(MapType.GoldSrc))
-		{
-			LoadClipNodes(bsp.ClipNodes);
-		}
 		LoadPlanes(bsp.Planes);
 		LoadNodes(bsp.Nodes);
 		LoadLeafs(bsp.Leaves);
@@ -54,9 +50,15 @@ public class BSPLoader
 		//LoadLightVols(bsp.);
 		//if (bsp.VisibilityLoaded)
 		if (bsp.MapType.IsSubtypeOf(MapType.Source))
+		{
+			LoadDisplacements(bsp.Displacements);
 			LoadPrimitives(bsp.Primitives);
+		}
 
 		LoadReferences();
+
+		// Clear vertex counter before loading next map
+		FaceDebug.vertexCounter = 0;
 	}
 
 	private void LoadEntities(Entities entities)
@@ -129,15 +131,6 @@ public class BSPLoader
 		}
 	}
 
-	private void LoadClipNodes(Lump<ClipNode> clipNodes)
-	{
-		for (var i = 0; i < clipNodes.Count; i++)
-		{
-			var instance = InstantiatePrefab<ClipNodeDebug>(i);
-			instance.Init(clipNodes[i]);
-		}
-	}
-
 	private void LoadLeafs(Lump<Leaf> leaves)
 	{
 		for (var i = 0; i < leaves.Count; i++)
@@ -202,7 +195,7 @@ public class BSPLoader
 		for (var i = 0; i < faces.Count; i++)
 		{
 			var instance = InstantiatePrefab<FaceDebug>(i);
-			instance.Init(faces[i]);
+			instance.Init(faces[i], i);
 		}
 	}
 
@@ -230,11 +223,23 @@ public class BSPLoader
 		}
 	}
 
+	private void LoadDisplacements(Lump<Displacement> displacements)
+	{
+		for (var i = 0; i < displacements.Count; i++)
+		{
+			var instance = InstantiatePrefab<DisplacementDebug>(i);
+			instance.Init(displacements[i]);
+		}
+	}
+
 	private void LoadReferences()
 	{
-		var debugRefs = Object.FindObjectsOfType<MonoBehaviour>().OfType<IDebugReference>();
-		foreach (var debugRef in debugRefs)
-			debugRef.InitReferences();
+		foreach (Transform child in worldRoot.transform)
+		{
+			var behaviour = child.GetComponent<MonoBehaviour>();
+			if (behaviour is IDebugReference)
+				((IDebugReference)behaviour).InitReferences();
+		}
 	}
 
 	private T InstantiatePrefab<T>(int index) where T : Component
