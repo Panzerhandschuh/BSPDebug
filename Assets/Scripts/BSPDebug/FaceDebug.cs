@@ -201,8 +201,8 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 		var lightmapTotalSize = lmSize * lmSize * 3;
 		var lmOffset = face.Lightmap * lightmapTotalSize;
 
-		var uvMin = new Vector2(1f, 1f);
-		var uvMax = new Vector2(0f, 0f);
+		var uvMin = new Vector2(float.MaxValue, float.MaxValue);
+		var uvMax = new Vector2(float.MinValue, float.MinValue);
 		var vertices = face.Vertices.ToArray();
 		foreach (var vert in vertices)
 		{
@@ -224,10 +224,15 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 		qLightmapStart = lmStart;
 		qLightmapEnd = lmEnd;
 
-		if (lmTexSize.x == 0 || lmTexSize.y == 0)
+		if (lmTexSize.x == 0 || lmTexSize.y == 0 ||
+			lmTexSize.x > lmSize || lmTexSize.y > lmSize)
+		{
+			Debug.Log("Invalid lightmap size: " + lmTexSize);
 			return;
+		}
 
 		lightmapTexture = new Texture2D(lmTexSize.x, lmTexSize.y);
+
 		for (var x = lmStart.x; x < lmEnd.x; x++)
 		{
 			for (var y = lmStart.y; y < lmEnd.y; y++)
@@ -384,7 +389,7 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 
 	private void DrawPatch(int patchStartVertex)
 	{
-		var dispPower = 2; // Displacement power
+		var dispPower = 3; // Displacement power
 		var subdiv = (1 << dispPower) + 1;
 		for (var i = 0; i < subdiv; i++)
 		{
