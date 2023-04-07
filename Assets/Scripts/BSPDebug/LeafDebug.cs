@@ -15,8 +15,13 @@ public class LeafDebug : MonoBehaviour, IDebugReference
 	public int numLeafBrushes;
 	public int leafWaterDataId;
 
+	// Actual face/brush indices referenced by the LeafFaces/LeafBrushes lumps
+	public int firstFaceIndex;
+	public int firstBrushIndex;
+	
 	public FaceDebug[] leafFaceRefs;
 	public BrushDebug[] leafBrushRefs;
+	public NodeDebug parentNodeRef;
 
 	private NumList leafFaces;
 	private NumList leafBrushes;
@@ -37,6 +42,12 @@ public class LeafDebug : MonoBehaviour, IDebugReference
 
 		leafFaces = leaf.Parent.Bsp.LeafFaces;
 		leafBrushes = leaf.Parent.Bsp.LeafBrushes;
+
+		if (numLeafFaces > 0)
+			firstFaceIndex = (int)leafFaces[firstLeafFace];
+		
+		if (numLeafBrushes > 0)
+			firstBrushIndex = (int)leafBrushes[firstLeafBrush];
 	}
 
 	public void InitReferences()
@@ -58,6 +69,7 @@ public class LeafDebug : MonoBehaviour, IDebugReference
 			{
 				var brushIndex = (int)leafBrushes[firstLeafBrush + i];
 				leafBrushRefs[i] = ReferenceFinder.Find<BrushDebug>(transform.parent, brushIndex);
+				leafBrushRefs[i].parentLeafRef = this;
 			}
 		}
 	}

@@ -195,6 +195,9 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 
 	private void InitLightmapQuake3(Face face)
 	{
+		if (face.Lightmap < 0)
+			return;
+
 		var lightmap = face.Parent.Bsp.Lightmaps;
 
 		const int lmSize = 128;
@@ -224,7 +227,7 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 		qLightmapStart = lmStart;
 		qLightmapEnd = lmEnd;
 
-		if (lmTexSize.x == 0 || lmTexSize.y == 0 ||
+		if (lmTexSize.x <= 0 || lmTexSize.y <= 0 ||
 			lmTexSize.x > lmSize || lmTexSize.y > lmSize)
 		{
 			Debug.Log("Invalid lightmap size: " + lmTexSize);
@@ -331,13 +334,25 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 
 	private void DebugDrawSource()
 	{
-		planeRef.DebugDraw();
+		//planeRef.DebugDraw();
+
+		DrawTextureInfo();
 
 		foreach (var edgeRef in edgeRefs)
 			edgeRef.DebugDraw();
 
 		foreach (var primitive in primitiveRefs)
 			primitive.DebugDraw();
+	}
+
+	private void DrawTextureInfo()
+	{
+		var centerPos = Vector3.zero;
+		foreach (var edge in edgeRefs)
+			centerPos += edge.vertexRef1.position.SwizzleYZ();
+
+		centerPos /= edgeRefs.Length;
+		textureInfoRef.DebugDraw(centerPos);
 	}
 
 	private void DebugDrawQuake3()

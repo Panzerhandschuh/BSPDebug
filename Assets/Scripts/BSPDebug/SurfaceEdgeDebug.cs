@@ -44,7 +44,7 @@ public class SurfaceEdgeDebug : MonoBehaviour, IDebugReference
 		Gizmos.color = Color.white;
 		Gizmos.DrawLine(vertexRef1.transform.position, vertexRef2.transform.position);
 
-		var arrowDir = vertexRef2.transform.position - vertexRef1.transform.position;
-		DebugExtension.DrawArrow(vertexRef1.transform.position, arrowDir.normalized * 10f, Color.green);
+		//var arrowDir = vertexRef2.transform.position - vertexRef1.transform.position;
+		//DebugExtension.DrawArrow(vertexRef1.transform.position, arrowDir.normalized * 10f, Color.green);
 	}
 }

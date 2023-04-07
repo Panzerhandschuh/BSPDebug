@@ -24,5 +24,8 @@ public class VertexDebug : MonoBehaviour
 	{
 		Gizmos.color = Color.green;
 		Gizmos.DrawWireCube(position.SwizzleYZ(), Vector3.one * 5f);
+
+		Gizmos.color = Color.red;
+		Gizmos.DrawRay(position.SwizzleYZ(), normal.SwizzleYZ() * 5f);
 	}
 }

@@ -36,6 +36,7 @@ public class BSPLoader
 		if (bsp.MapType.IsSubtypeOf(MapType.Source) || bsp.MapType.IsSubtypeOf(MapType.Quake3))
 		{
 			LoadLeafBrushes(bsp.LeafBrushes);
+			LoadAreas(bsp.Areas);
 			LoadBrushes(bsp.Brushes);
 			LoadBrushSides(bsp.BrushSides);
 			LoadVisibility(bsp.Visibility);
@@ -161,6 +162,12 @@ public class BSPLoader
 			var instance = InstantiatePrefab<ModelDebug>(i);
 			instance.Init(models[i]);
 		}
+	}
+
+	private void LoadAreas(Lump<Area> areas)
+	{
+		var instance = worldRoot.AddComponent<AreasDebug>();
+		instance.Init(areas);
 	}
 
 	private void LoadBrushes(Lump<Brush> brushes)

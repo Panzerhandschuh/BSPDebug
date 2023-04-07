@@ -32,6 +32,11 @@ public class TextureInfoDebug : MonoBehaviour, IDebugReference
 
 	private void OnDrawGizmosSelected()
 	{
+		DebugDraw(Vector3.zero);
+	}
+
+	public void DebugDraw(Vector3 position)
+	{
 		//var bounds = new Bounds();
 		//bounds.min = textureVecs[0].SwizzleYZ() * 10f;
 		//bounds.max = textureVecs[1].SwizzleYZ() * 10f;
@@ -42,7 +47,7 @@ public class TextureInfoDebug : MonoBehaviour, IDebugReference
 		//Gizmos.DrawWireCube(textureVecs[0].SwizzleYZ() * 10f, Vector3.one * 2.5f);
 		//Gizmos.DrawWireCube(textureVecs[1].SwizzleYZ() * 10f, Vector3.one * 2.5f);
 
-		DebugExtension.DrawArrow(Vector3.zero, textureVecs[0].SwizzleYZ() * 10f, Color.green);
-		DebugExtension.DrawArrow(Vector3.zero, textureVecs[1].SwizzleYZ() * 10f, Color.green);
+		DebugExtension.DrawArrow(position, textureVecs[0].SwizzleYZ() * 2.5f, Color.green);
+		DebugExtension.DrawArrow(position, textureVecs[1].SwizzleYZ() * 2.5f, Color.green);
 	}
 }

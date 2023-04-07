@@ -17,7 +17,7 @@ public class TextureDataDebug : MonoBehaviour
 		size = textureData.Size;
 		viewSize = textureData.ViewSize;
 
-		var textureDataStringTableOffset = (int)bsp.TextureTable[nameStringTableId];
-		textureName = bsp.Textures.GetTextureAtOffset((uint)textureDataStringTableOffset);
+		var textureDataStringTableOffset = (uint)bsp.TextureTable[nameStringTableId];
+		textureName = bsp.Textures.GetTextureAtOffset(textureDataStringTableOffset);
 	}
 }

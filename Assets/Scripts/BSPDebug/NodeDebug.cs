@@ -19,6 +19,7 @@ public class NodeDebug : MonoBehaviour, IDebugReference
 	public GameObject child1Ref;
 	public GameObject child2Ref;
 	public FaceDebug[] faceRefs;
+	public NodeDebug parentNodeRef;
 
 	public void Init(Node node)
 	{
@@ -44,6 +45,9 @@ public class NodeDebug : MonoBehaviour, IDebugReference
 		planeRef = ReferenceFinder.Find<PlaneDebug>(transform.parent, planeIndex);
 		child1Ref = FindChild(children[0]);
 		child2Ref = FindChild(children[1]);
+		
+		UpdateParentNodeReference(child1Ref);
+		UpdateParentNodeReference(child2Ref);
 
 		if (numFaces > 0)
 		{
@@ -51,6 +55,15 @@ public class NodeDebug : MonoBehaviour, IDebugReference
 			for (int i = 0; i < numFaces; i++)
 				faceRefs[i] = ReferenceFinder.Find<FaceDebug>(transform.parent, firstFaceIndex + i);
 		}
+	}
+
+	private void UpdateParentNodeReference(GameObject child)
+	{
+		var node = child.GetComponent<NodeDebug>();
+		if (node != null)
+			node.parentNodeRef = this;
+		else
+			child.GetComponent<LeafDebug>().parentNodeRef = this;
 	}
 
 	private GameObject FindChild(int childIndex)
