@@ -42,6 +42,10 @@ public class PrimitiveDebug : MonoBehaviour
 			Gizmos.DrawLine(v1, v2);
 			Gizmos.DrawLine(v2, v3);
 			Gizmos.DrawLine(v3, v1);
+
+			var center = (v1 + v2 + v3) / 3;
+			var normal = Vector3.Cross(v2 - v1, v3 - v1).normalized;
+			DebugExtension.DrawArrow(center, normal, Color.blue);
 		}
 	}
 }

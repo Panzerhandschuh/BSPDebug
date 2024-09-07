@@ -28,6 +28,7 @@ public class BSPLoader
 			LoadTextureData(bsp.TextureData);
 			LoadTextureDataStringTable(bsp.TextureTable);
 			LoadEdges(bsp.FaceEdges);
+			LoadAreas(bsp.Areas);
 		}
 		LoadPlanes(bsp.Planes);
 		LoadNodes(bsp.Nodes);
@@ -36,7 +37,6 @@ public class BSPLoader
 		if (bsp.MapType.IsSubtypeOf(MapType.Source) || bsp.MapType.IsSubtypeOf(MapType.Quake3))
 		{
 			LoadLeafBrushes(bsp.LeafBrushes);
-			LoadAreas(bsp.Areas);
 			LoadBrushes(bsp.Brushes);
 			LoadBrushSides(bsp.BrushSides);
 			LoadVisibility(bsp.Visibility);
@@ -53,7 +53,8 @@ public class BSPLoader
 		if (bsp.MapType.IsSubtypeOf(MapType.Source))
 		{
 			LoadDisplacements(bsp.Displacements);
-			LoadPrimitives(bsp.Primitives);
+			//if (bsp.GameLump.PrimitiveTextureInfoLoaded)
+				LoadPrimitives(bsp.Primitives);
 		}
 
 		LoadReferences();

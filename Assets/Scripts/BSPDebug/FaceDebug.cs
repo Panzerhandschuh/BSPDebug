@@ -61,7 +61,7 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 	public PlaneDebug planeRef;
 	public SurfaceEdgeDebug[] edgeRefs;
 	public TextureInfoDebug textureInfoRef;
-	public PrimitiveDebug[] primitiveRefs;
+	public List<PrimitiveDebug> primitiveRefs;
 	public Texture2D lightmapTexture;
 
 	private MapType mapType;
@@ -126,6 +126,9 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 		vertexNormals = new Vector3[numEdges];
 		for (var i = 0; i < numEdges; i++)
 		{
+			if (vertexCounter >= face.Parent.Bsp.Indices.Count)
+				continue;
+			
 			var normalIndex = (int)face.Parent.Bsp.Indices[vertexCounter];
 			vertexNormals[i] = face.Parent.Bsp.Normals[normalIndex];
 
@@ -293,9 +296,13 @@ public class FaceDebug : MonoBehaviour, IDebugReference
 
 			if (firstPrimitiveId > -1)
 			{
-				primitiveRefs = new PrimitiveDebug[numPrimitives];
+				primitiveRefs = new List<PrimitiveDebug>(numPrimitives);
 				for (var i = 0; i < numPrimitives; i++)
-					primitiveRefs[i] = ReferenceFinder.Find<PrimitiveDebug>(transform.parent, firstPrimitiveId + i);
+				{
+					var primRef = ReferenceFinder.Find<PrimitiveDebug>(transform.parent, firstPrimitiveId + i);
+					if (primRef != null)
+						primitiveRefs.Add(primRef);
+				}
 			}
 		}
 		else
